@@ -1,7 +1,7 @@
-import { AuthCard } from "@/components/auth/auth-card"
-import { HeroPanel } from "@/components/auth/hero-panel"
+import { AuthCard } from "../components/AuthCard";
+import HeroPanel from "@/components/HeroPanel";
 
-export default function Page() {
+export default function Login() {
   return (
     <main className="flex min-h-screen w-full bg-background">
       {/* Left panel - 45% (Authentication Form) */}
@@ -14,5 +14,5 @@ export default function Page() {
         <HeroPanel />
       </section>
     </main>
-  )
+  );
 }

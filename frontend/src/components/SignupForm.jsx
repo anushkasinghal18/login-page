@@ -1,24 +1,22 @@
-"use client"
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { User, Mail, Phone, Lock, Loader2 } from "lucide-react";
+import { Field } from "./Field";
+import ResultBanner from "./ResultBanner";
+import { signupSchema } from "../../lib/auth/schemas";
+import { useAuth } from "../hooks/useAuth";
+import { ROLES } from "../../lib/auth/types";
+import { useNavigate } from "react-router-dom";
 
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { User, Mail, Phone, Lock, Loader2 } from "lucide-react"
-import { Field } from "./field"
-import { SocialButtons } from "./social-buttons"
-import { ResultBanner } from "./result-banner"
-import { signupSchema, type SignupValues } from "@/lib/auth/schemas"
-import { useAuth } from "@/lib/auth/use-auth"
-import { ROLES, type Role } from "@/lib/auth/types"
-import { useRouter } from "next/navigation"
-
-export function SignupForm({ role }: { role: Role }) {
-  const { signup, isLoading, result } = useAuth()
-  const router = useRouter()
+export function SignupForm({ role }) {
+  const { signup, isLoading, result } = useAuth();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignupValues>({
+  } = useForm({
     resolver: zodResolver(signupSchema),
     defaultValues: {
       firstName: "",
@@ -28,16 +26,16 @@ export function SignupForm({ role }: { role: Role }) {
       password: "",
       confirmPassword: "",
     },
-  })
+  });
 
-  const roleLabel = ROLES.find((r) => r.value === role)?.label
+  const roleLabel = ROLES.find((r) => r.value === role)?.label;
 
-  async function onSubmit(values: SignupValues) {
-    const res = await signup(values, role)
+  async function onSubmit(values) {
+    const res = await signup(values, role);
     if (res && res.success && res.redirectTo) {
       setTimeout(() => {
-        router.push(res.redirectTo)
-      }, 1500)
+        navigate(res.redirectTo);
+      }, 1500);
     }
   }
 
@@ -116,19 +114,6 @@ export function SignupForm({ role }: { role: Role }) {
         {isLoading && <Loader2 className="size-4 animate-spin" />}
         {isLoading ? "Creating Account..." : "Create Account"}
       </button>
-
-      <Divider />
-      <SocialButtons role={role} />
     </form>
-  )
-}
-
-function Divider() {
-  return (
-    <div className="flex items-center gap-3 py-1">
-      <span className="h-px flex-1 bg-border" />
-      <span className="text-xs text-muted-foreground">or sign up with</span>
-      <span className="h-px flex-1 bg-border" />
-    </div>
-  )
+  );
 }

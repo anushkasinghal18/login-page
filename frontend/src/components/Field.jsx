@@ -1,23 +1,20 @@
-"use client"
+import { forwardRef, useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
+import { cn } from "@/utils";
 
-import { forwardRef, useState } from "react"
-import { Eye, EyeOff, type LucideIcon } from "lucide-react"
-import { cn } from "@/lib/utils"
-
-interface FieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label: string
-  icon?: LucideIcon
-  error?: string
-  isPassword?: boolean
-}
-
-export const Field = forwardRef<HTMLInputElement, FieldProps>(function Field(
-  { label, icon: Icon, error, isPassword, type = "text", className, id, ...props },
-  ref,
-) {
-  const [show, setShow] = useState(false)
-  const inputId = id ?? props.name
-  const inputType = isPassword ? (show ? "text" : "password") : type
+export const Field = forwardRef(function Field({
+  label,
+  icon: Icon,
+  error,
+  isPassword,
+  type = "text",
+  className,
+  id,
+  ...props
+}, ref) {
+  const [show, setShow] = useState(false);
+  const inputId = id ?? props.name;
+  const inputType = isPassword ? (show ? "text" : "password") : type;
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -43,7 +40,7 @@ export const Field = forwardRef<HTMLInputElement, FieldProps>(function Field(
             Icon ? "pl-9" : "pl-3.5",
             isPassword ? "pr-10" : "pr-3.5",
             error && "border-destructive/70 focus:border-destructive focus:ring-destructive/15",
-            className,
+            className
           )}
           {...props}
         />
@@ -60,5 +57,5 @@ export const Field = forwardRef<HTMLInputElement, FieldProps>(function Field(
       </div>
       {error && <p className="text-xs font-medium text-destructive">{error}</p>}
     </div>
-  )
-})
+  );
+});

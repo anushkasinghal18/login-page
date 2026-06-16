@@ -1,34 +1,28 @@
-"use client"
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Mail, Lock, Loader2 } from "lucide-react";
+import { Field } from "./Field";
+import ResultBanner from "./ResultBanner";
+import { loginSchema } from "../../lib/auth/schemas";
+import { useAuth } from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Mail, Lock, Loader2 } from "lucide-react"
-import { Field } from "./field"
-import { SocialButtons } from "./social-buttons"
-import { ResultBanner } from "./result-banner"
-import { loginSchema, type LoginValues } from "@/lib/auth/schemas"
-import { useAuth } from "@/lib/auth/use-auth"
-import type { Role } from "@/lib/auth/types"
-import { useRouter } from "next/navigation"
 
-export function LoginForm({ role }: { role: Role }) {
-  const { login, isLoading, result } = useAuth()
-  const router = useRouter()
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginValues>({
+export default function LoginForm({ role }) {
+  const { login, isLoading, result } = useAuth();
+  const navigate = useNavigate();
+
+  const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "", rememberMe: false },
-  })
+  });
 
-  async function onSubmit(values: LoginValues) {
-    const res = await login(values, role)
+  async function onSubmit(values) {
+    const res = await login(values, role);
     if (res && res.success && res.redirectTo) {
       setTimeout(() => {
-        router.push(res.redirectTo)
-      }, 1200)
+        navigate(res.redirectTo);
+      }, 1200);
     }
   }
 
@@ -65,10 +59,7 @@ export function LoginForm({ role }: { role: Role }) {
           />
           Remember me
         </label>
-        <button
-          type="button"
-          className="text-sm font-medium text-primary transition-opacity hover:opacity-80"
-        >
+        <button type="button" className="text-sm font-medium text-primary transition-opacity hover:opacity-80">
           Forgot password?
         </button>
       </div>
@@ -81,19 +72,6 @@ export function LoginForm({ role }: { role: Role }) {
         {isLoading && <Loader2 className="size-4 animate-spin" />}
         {isLoading ? "Signing In..." : "Sign In"}
       </button>
-
-      <Divider />
-      <SocialButtons role={role} />
     </form>
-  )
-}
-
-function Divider() {
-  return (
-    <div className="flex items-center gap-3 py-1">
-      <span className="h-px flex-1 bg-border" />
-      <span className="text-xs text-muted-foreground">or continue with</span>
-      <span className="h-px flex-1 bg-border" />
-    </div>
-  )
+  );
 }
